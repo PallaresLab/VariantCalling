@@ -1,0 +1,15 @@
+# config.yaml
+# path to the bam files
+bam_dir: "/fml/ag-pallares_projects/NexDNAseq/code/hxu_snake/test_results/working/picard"
+
+# path to results
+output_dir: "/fml/ag-pallares_projects/NexDNAseq/code/hxu_snake/VarCalling/results"
+
+# path to reference genome
+reference_genome: "/fml/ag-pallares_projects/NexDNAseq/code/hxu_snake/genome/dmel-all-chromosome-r6.14.fasta"
+
+# path to SNP database
+dbSNP: "/fml/ag-pallares_projects/Princeton/bigProject/SNPdb/dbSNP_Nex_Sep28.19.vcf"
+
+# path to bed file
+bed_file: "out.bed"

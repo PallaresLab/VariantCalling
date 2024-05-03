@@ -1,25 +1,33 @@
 shell.executable("bash")
 
 from snakemake.utils import min_version
-#min_version("8.10.6")
+import multiprocessing
+min_version("8.10")
 
 configfile: "config.yaml"
 log_dir = config['output_dir'] + "/logs"
 working_dir = config['output_dir'] + "/working"
-ref_genome_name=os.path.basename(config['reference_genome'])
+ref_basename=os.path.basename(config['reference_genome'])
+ref_name=os.path.splitext(os.path.basename(config['reference_genome']))[0]    
 sample_files = snakemake.utils.listfiles(config["bam_dir"]+"/{sample}.bam")
 samples = dict((y[0], x) for x, y in sample_files)
 
 
-
-
 rule all:
     input:
-        directory(working_dir + "/JointCallSNPs/database"),
-        #working_dir + "/JointCallSNPs/all_samples.vcf.gz",
+        working_dir + "/VQSR/SNP_recal.vcf.gz",
+        working_dir + "/HardFilter/all_samples_filter.vcf.gz",
+        
+        
+include: "rules/genome_prepare.smk"        
+include: "rules/BQSR.smk"
+include: "rules/HaplotypeCaller.smk"        
+include: "rules/JointCallSNPs.smk"
+include: "rules/VQSR.smk"
+include: "rules/HardFilter.smk"
      
 '''
-include: "rules/genome_prepare.smk"         
+       
 
         
         
@@ -98,7 +106,30 @@ rule HaplotypeCaller:
         ">{log} 2>&1 "
 
 
-'''
+
+rule JointCallSNPs:
+    input:
+        db = directory(working_dir + "/JointCallSNPs/database"),
+        R = working_dir + "/genome/"+ref_genome_name,
+        
+    output:
+        vcf = working_dir + "/JointCallSNPs/all_samples.vcf.gz",
+    
+    log: 
+        log_dir + "/JointCallSNPs/GenotypeGVCFs.log",     
+    
+    params:
+        outdir = working_dir+"/JointCallSNPs"
+        
+    #conda:
+        #"envs/gatk.yml"
+    shell:
+        "gatk GenotypeGVCFs "
+        "-R {input.R} "
+        "-V gendb://{input.db} "
+        "-O {output.vcf} "
+        ">{log} 2>&1"
+
 rule JointCallSNPs:
     input:
         f = expand(working_dir+"/HaplotypeCaller/{sample}.g.vcf.gz", sample=samples.keys()),
@@ -129,7 +160,7 @@ rule JointCallSNPs:
         ">{log.log1} 2>&1 && "
         
         "rm input_files.txt  "
-'''       
+       
         "gatk GenotypeGVCFs "
         "-R {input.R} "
         "-V gendb://{output.db} "
@@ -174,6 +205,7 @@ rule VQSR:
         " --rscript-file recalibration_plots.R "
         "-O {output.output1} "
         ">{log.log1} 2>&1 && "
+        gatk VariantRecalibrator -V result/JointCallSNPs/all_samples.vcf.gz -R result/working/genome/dmel-all-chromosome-r6.14.fasta -L out.bed -resource:dgrp2,known=false,training=true,truth=true,prior=15.0 dgrp2.vcf -resource:gdl,known=false,training=true,truth=true,prior=15.0 gdl.vcf -an QD -an MQ -an MQRankSum -an ReadPosRankSum -an FS -an SOR -mode SNP --tranches-file output.tranches --rscript-file recalibration_plots.R -O SNP.recal 
         
         "gatk ApplyVQSR "
         "-V {input.V} "
