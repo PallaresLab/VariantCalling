@@ -1,6 +1,6 @@
 rule VariantFiltration:
     input:
-        V = working_dir + "/JointCallSNPs/all_samples.vcf.gz",
+        V = working_dir + "/VQSR/SNP_recal.vcf.gz",
     
     output:
         working_dir + "/HardFilter/all_samples_filter.vcf.gz",
