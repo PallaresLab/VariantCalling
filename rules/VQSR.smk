@@ -1,6 +1,6 @@
 rule VariantRecalibrator:
     input:
-        V = working_dir + "/JointCallSNPs/all_samples.vcf.gz",
+        V = working_dir + "/JointCallSNPs/all_samples_converted.vcf.gz",
         R = working_dir + "/genome_prepare/"+ref_basename,
         L = config['bed_file'] ,
         vcf = config['dbSNP']
@@ -26,12 +26,13 @@ rule VariantRecalibrator:
         "-V {input.V} "
         "-R {input.R} "
         "-L {input.L} "
-        "-resource:dbSNP_Nex_Sep28.19,known=false,training=true,truth=true,prior=15.0 {input.vcf} "
+        "-resource:dbSNP_Nex_Sep28.19,known=false,training=true,truth=true,prior=10.0 {input.vcf} "
+        "-tranche 100.0 -tranche 99.9 -tranche 99.0 -tranche 95.0 -tranche 90.0 "
         "-an QD -an MQ -an MQRankSum -an ReadPosRankSum -an FS -an SOR -an DP "
         "-mode SNP "
         "--tranches-file {output.tranches} "
-        "--rscript-file  "
-        "--trust-all-polymorphic {output.r} "
+        "--rscript-file {output.r} "
+        "--trust-all-polymorphic "
         "-O {output.recal} "
         ">{log} 2>&1 "
     
@@ -39,7 +40,7 @@ rule VariantRecalibrator:
                 
 rule ApplyVQSR:
     input:
-        V = working_dir + "/JointCallSNPs/all_samples.vcf.gz",
+        V = working_dir + "/JointCallSNPs/all_samples_converted.vcf.gz",
         R = working_dir + "/genome_prepare/"+ref_basename,
         recal = working_dir + "/VQSR/SNP.recal",
         tranches = working_dir + "/VQSR/output.tranches",

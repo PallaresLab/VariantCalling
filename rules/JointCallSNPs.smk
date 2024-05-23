@@ -26,7 +26,7 @@ rule GenomicsDBImport:
         "gatk --java-options '-Xmx20G -XX:+UseParallelGC -XX:ParallelGCThreads=4' "
         "GenomicsDBImport "
         "--genomicsdb-workspace-path {output} -L {input.L} "
-        "$(< input_files.txt) "#info about -V *.g.vcf.gz
+        "$(< input_files.txt) " #info about -V *.g.vcf.gz
         "--reader-threads {threads} "
         "--max-num-intervals-to-import-in-parallel 4 "
         ">{log} 2>&1 && "
@@ -57,3 +57,26 @@ rule GenotypeGVCFs:
         "-V gendb://{input.db} "
         "-O {output} "
         ">{log} 2>&1"
+        
+        
+        
+rule convert_missing_genotypes:
+    input:
+        working_dir + "/JointCallSNPs/all_samples.vcf.gz",
+        
+    output:
+        working_dir + "/JointCallSNPs/all_samples_converted.vcf.gz",
+        
+    log:
+        log_dir + "/JointCallSNPs/convert_missing_genotypes.log",   
+        
+    conda:
+        "../envs/bcftools.yml",
+
+    shell:     
+        "bcftools +setGT -Oz -o {output} {input} -- -t q -n . -i '(FORMAT/DP=0 && GT=\"0/0\") || SMPL_MAX(FORMAT/PL)=0' && " #SMPL_MAX(FORMAT/PL)=0 indicate unreliable or miscalled
+        "gatk IndexFeatureFile -I {output} "
+        ">{log} 2>&1"  
+
+
+
