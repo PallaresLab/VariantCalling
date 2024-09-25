@@ -56,7 +56,7 @@ This snakemake pipeline is designed for Variant Calling
     ```
 
 5.  Edit configuration files
-    change the path of fastq_dir, output_dir, reference_genome in "config.yaml"
+    change the path of bam_dir, output_dir, reference_genome, dbSNP and bed_file in "config.yaml"
 
 6.  Create index for your SNP database
 
