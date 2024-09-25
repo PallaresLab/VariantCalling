@@ -73,7 +73,7 @@ This snakemake pipeline is designed for Variant Calling
 8.  Execute the workflow
 
     ```bash
-    snakemake --configfile "config.yaml" --use--singularity  --cores N
+    snakemake --configfile "config.yaml" --use--singularity  --singularity-args "--bind /absolute/path/to/bind/folder/" --cores N
     ```
 
 
