@@ -1,4 +1,4 @@
-# Paired-end DNA pipeline
+# Variant Calling pipeline
 
 ## Description
 This snakemake pipeline is designed for Variant Calling
@@ -49,39 +49,31 @@ This snakemake pipeline is designed for Variant Calling
     conda activate <project_name>
     ```
 
-4.  Enable the [Bioconda](https://bioconda.github.io/#using-bioconda) channel
-
-    ```
-    conda config --add channels defaults
-    conda config --add channels bioconda
-    conda config --add channels conda-forge
-    ```
-
-5. Install snakemake
+4. Install snakemake
 
     ```bash
     conda install snakemake
     ```
 
-6.  Edit configuration files
+5.  Edit configuration files
     change the path of fastq_dir, output_dir, reference_genome in "config.yaml"
 
-7.  Create index for your SNP database
+6.  Create index for your SNP database
 
     ```bash
     gatk IndexFeatureFile -I dbSNP.vcf.gz
     ```
 
-8.  The first time you are executing this snakemake pipeline it should run locally, once the first run is over (you can use --dry), you can switch to running it on the cluster.
+7.  The first time you are executing this snakemake pipeline it should run locally, once the first run is over (you can use --dry), you can switch to running it on the cluster.
 
     ```bash
-    snakemake --configfile "config.yaml" --use-conda  --cores N --dryrun
+    snakemake --configfile "config.yaml" --use--singularity  --cores N --dryrun
     ```
 
-9.  Execute the workflow
+8.  Execute the workflow
 
     ```bash
-    snakemake --configfile "config.yaml" --use-conda  --cores N
+    snakemake --configfile "config.yaml" --use--singularity  --cores N
     ```
 
 
