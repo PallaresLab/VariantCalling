@@ -11,10 +11,7 @@ rule samtools:
         
     params:
         outdir = working_dir+"/genome_prepare",
-        new_genome = working_dir+"/genome_prepare/"+ref_basename
-        
-    conda:
-        "../envs/samtools.yml"  
+        new_genome = working_dir+"/genome_prepare/"+ref_basename 
 
     shell: 
         "mkdir -p {params.outdir} && "
@@ -24,17 +21,16 @@ rule samtools:
         
 rule CreateSequenceDictionary:
     input:
-        working_dir+"/genome_prepare/"+ref_basename
+        R = working_dir+"/genome_prepare/"+ref_basename,
+        dbSNP=config['dbSNP']
 
     output:
         working_dir+"/genome_prepare/"+ref_name +".dict",
            
     log:
         log_dir+"/genome_prepare/gatk_CreateSequenceDictionary.log"
-                
-    conda:
-        "../envs/gatk.yml"
 
     shell: 
-        "gatk CreateSequenceDictionary -R {input} -O {output} "
+        "gatk CreateSequenceDictionary -R {input.R} -O {output} && "
+        "gatk IndexFeatureFile -I {input.dbSNP} "
         ">{log} 2>&1"

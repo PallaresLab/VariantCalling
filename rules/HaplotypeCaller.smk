@@ -17,9 +17,6 @@ rule HaplotypeCaller:
     
     threads: multiprocessing.cpu_count()
         
-    conda:
-        "../envs/gatk.yml"
-        
     shell:
         "mkdir -p {params.outdir} && "
         "gatk --java-options '-Xmx20G -XX:+UseParallelGC -XX:ParallelGCThreads=4' "

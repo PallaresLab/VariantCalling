@@ -1,6 +1,6 @@
 rule VariantRecalibrator:
     input:
-        V = working_dir + "/JointCallSNPs/all_samples_converted.vcf.gz",
+        V = working_dir + "/JointCallSNPs/all_samples.vcf.gz",
         R = working_dir + "/genome_prepare/"+ref_basename,
         L = config['bed_file'] ,
         vcf = config['dbSNP']
@@ -15,9 +15,6 @@ rule VariantRecalibrator:
    
     params:
         outdir = working_dir+"/VQSR"
-        
-    conda:
-        "../envs/vqsr.yml"
 
     shell:
         "mkdir -p {params.outdir} && "
@@ -40,7 +37,7 @@ rule VariantRecalibrator:
                 
 rule ApplyVQSR:
     input:
-        V = working_dir + "/JointCallSNPs/all_samples_converted.vcf.gz",
+        V = working_dir + "/JointCallSNPs/all_samples.vcf.gz",
         R = working_dir + "/genome_prepare/"+ref_basename,
         recal = working_dir + "/VQSR/SNP.recal",
         tranches = working_dir + "/VQSR/output.tranches",
@@ -55,9 +52,6 @@ rule ApplyVQSR:
     
     params:
         outdir = working_dir+"/VQSR"
-        
-    conda:
-        "../envs/gatk.yml"
 
     shell:
         "gatk --java-options '-Xmx20G -XX:+UseParallelGC -XX:ParallelGCThreads=4' "

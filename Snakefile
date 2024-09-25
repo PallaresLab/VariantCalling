@@ -12,6 +12,8 @@ ref_name=os.path.splitext(os.path.basename(config['reference_genome']))[0]
 sample_files = snakemake.utils.listfiles(config["bam_dir"]+"/{sample}.bam")
 samples = dict((y[0], x) for x, y in sample_files)
 
+singularity: "docker://broadinstitute/gatk"
+
 
 rule all:
     input:

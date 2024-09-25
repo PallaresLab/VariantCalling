@@ -16,12 +16,9 @@ rule BaseRecalibrator:
         outdir = working_dir+"/BQSR"
         
     threads: 8
-        
-    conda:
-        "../envs/gatk.yml"
 
     shell:
-        "mkdir -p {params.outdir} &&"
+        "mkdir -p {params.outdir} && "
         "gatk --java-options '-Xmx20G -XX:+UseParallelGC -XX:ParallelGCThreads=4' "
         "BaseRecalibratorSpark "
         "-O {output} "
@@ -50,9 +47,6 @@ rule ApplyBQSR:
         
     threads: 8
     
-    conda:
-        "../envs/gatk.yml"
-
     shell:        
         "gatk --java-options '-Xmx20G -XX:+UseParallelGC -XX:ParallelGCThreads=4' "
         "ApplyBQSRSpark "
