@@ -20,10 +20,9 @@ rule HaplotypeCaller:
     shell:
         "mkdir -p {params.outdir} && "
         "gatk --java-options '-Xmx20G -XX:+UseParallelGC -XX:ParallelGCThreads=4' "
-        "HaplotypeCallerSpark "
+        "HaplotypeCaller "
         "-O {output} "
         "-R {input.R} "
         "-I {input.recal_bam} "
-        "-ERC GVCF "
-        "--spark-master local[{threads}] "        
+        "-ERC GVCF "     
         ">{log} 2>&1 "
