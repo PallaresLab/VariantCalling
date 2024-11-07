@@ -20,9 +20,9 @@ rule all:
         working_dir + "/HardFilter/all_samples_filter.vcf.gz",
         
         
-include: "rules/genome_prepare.smk"        
-include: "rules/BQSR.smk"
-include: "rules/HaplotypeCaller.smk"        
+#include: "rules/genome_prepare.smk"        
+#include: "rules/BQSR.smk"
+#include: "rules/HaplotypeCaller.smk"        
 include: "rules/JointCallSNPs.smk"
 include: "rules/VQSR.smk"
 include: "rules/HardFilter.smk"

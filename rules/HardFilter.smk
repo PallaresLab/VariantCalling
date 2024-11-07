@@ -10,10 +10,13 @@ rule VariantFiltration:
 
     params:
         outdir = working_dir+"/HardFilter"
+    threads:
+        256
+        
 
     shell:
         "mkdir -p {params.outdir} && "
-        "gatk --java-options '-Xmx20G -XX:+UseParallelGC -XX:ParallelGCThreads=4' "
+        "gatk --java-options '-Xmx20G -XX:+UseParallelGC -XX:ParallelGCThreads=32' "
         "VariantFiltration "
         "-O {output} "
         "-V {input.V} "
@@ -44,9 +47,12 @@ rule SelectVariants:
 
     params:
         outdir = working_dir + "/HardFilter"
+    threads:
+        256
+        
 
     shell:
-        "gatk --java-options '-Xmx20G -XX:+UseParallelGC -XX:ParallelGCThreads=4' "
+        "gatk --java-options '-Xmx20G -XX:+UseParallelGC -XX:ParallelGCThreads=32' "
         "SelectVariants "
         "-V {input.filtered_vcf} "
         "--set-filtered-genotype-to-no-call "

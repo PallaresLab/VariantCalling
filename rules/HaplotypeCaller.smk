@@ -15,7 +15,6 @@ rule HaplotypeCaller:
     params:
         outdir=working_dir+"/HaplotypeCaller"
     
-    threads: multiprocessing.cpu_count()
         
     shell:
         "mkdir -p {params.outdir} && "
@@ -24,5 +23,5 @@ rule HaplotypeCaller:
         "-O {output} "
         "-R {input.R} "
         "-I {input.recal_bam} "
-        "-ERC GVCF "     
+        "-ERC GVCF "      
         ">{log} 2>&1 "
