@@ -1,4 +1,4 @@
-# Paired-end DNA pipeline
+# Variant Calling pipeline
 
 ## Description
 This snakemake pipeline is designed for Variant Calling
@@ -84,6 +84,6 @@ This snakemake pipeline is designed for Variant Calling
     snakemake --configfile "config.yaml" --use-conda  --cores N
     ```
 
-Notice conda deflut channel will cause SSL error.
+!!!Notice conda deflut channel will cause SSL error with Max Planck intranet.
 
 
