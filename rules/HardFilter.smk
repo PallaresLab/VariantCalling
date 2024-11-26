@@ -24,8 +24,8 @@ rule VariantFiltration:
         "--filter-name 'LowQD' --filter-expression 'QD < 5.0' "
         "--filter-name 'LowMQ' --filter-expression 'MQ < 50.0' "
         "--filter-name 'HighStrandBiasFS' --filter-expression 'FS > 10.0' "
-        "--filter-name 'HighStrandBiasSOR' --filter-expression 'SOR > 2.0' "
-        "--filter-name 'ExtremeDepth' --filter-expression 'DP < 10 || DP > 200' "
+        "--filter-name 'HighStrandBiasSOR' --filter-expression 'SOR > 2.0' " #26.11: considering to change to 0.2 based on reference, alth 2.0 is standard
+        "--filter-name 'ExtremeDepth' --filter-expression 'DP < 10 || DP > 200' " #most sample need much higher threshold here >250k
         "--filter-name 'LowPE' --filter-expression 'PE < 500000' "
         ">{log} 2>&1 "
 
@@ -35,7 +35,8 @@ rule VariantFiltration:
         #Strand Bias (FS and SOR): Filter out SNPs with significant strand bias (e.g., FS > 10 or SOR > 2) to reduce false positives caused by strand-specific errors.
         #Depth of Coverage (DP): Remove SNPs with extreme coverage (too high or too low), as these may represent mapping artifacts or low-confidence calls.
         #the last parameter lowPE discards anything that is lower than 500k reads per sample.
-
+        #Additional Hard Filtering on the VCF - 26.11 - setting based on recalib plots:
+        #MQRankSum, ReadPosRunkSum and ExcessHet
 
 rule SelectVariants:
     input:
