@@ -4,4 +4,4 @@ channels:
     - defaults
 dependencies:
     - bcftools=1.20
-    - gatk4=4.5.0.0
+    - gatk4=4.6.1.0
