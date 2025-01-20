@@ -3,7 +3,7 @@ channels:
     - bioconda
     - defaults
 dependencies:
-    - gatk4=4.5.0.0
+    - gatk4=4.6.1.0
     - r-base=3.6.2
     - r-data.table=1.12.8
     - r-dplyr=0.8.5
