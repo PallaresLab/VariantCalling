@@ -15,10 +15,13 @@ rule VariantRecalibrator:
    
     params:
         outdir = working_dir+"/VQSR"
+        
+    conda:
+        "../envs/vqsr.yml"
 
     shell:
         "mkdir -p {params.outdir} && "
-        "gatk --java-options '-Xmx20G -XX:+UseParallelGC -XX:ParallelGCThreads=4' "
+        "gatk --java-options '-Xmx20G -XX:+UseParallelGC -XX:ParallelGCThreads=8' "
         "VariantRecalibrator "
         "-V {input.V} "
         "-R {input.R} "
@@ -52,9 +55,12 @@ rule ApplyVQSR:
     
     params:
         outdir = working_dir+"/VQSR"
+        
+    conda:
+        "../envs/vqsr.yml"
 
     shell:
-        "gatk --java-options '-Xmx20G -XX:+UseParallelGC -XX:ParallelGCThreads=4' "
+        "gatk --java-options '-Xmx20G -XX:+UseParallelGC -XX:ParallelGCThreads=8' "
         "ApplyVQSR "
         "-V {input.V} "
         "-R {input.R} "

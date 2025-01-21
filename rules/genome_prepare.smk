@@ -12,6 +12,9 @@ rule samtools:
     params:
         outdir = working_dir+"/genome_prepare",
         new_genome = working_dir+"/genome_prepare/"+ref_basename 
+        
+    conda:
+        "../envs/samtools.yml"
 
     shell: 
         "mkdir -p {params.outdir} && "
@@ -29,6 +32,9 @@ rule CreateSequenceDictionary:
            
     log:
         log_dir+"/genome_prepare/gatk_CreateSequenceDictionary.log"
+        
+    conda:
+        "../envs/gatk.yml"
 
     shell: 
         "gatk CreateSequenceDictionary -R {input.R} -O {output} && "

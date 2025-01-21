@@ -1,69 +1,79 @@
 rule GenomicsDBImport:
     input:
-        f = expand(working_dir+"/HaplotypeCaller/{sample}.g.vcf.gz", sample=samples.keys()),
-        L = config['bed_file'] 
+        expand(working_dir+"/HaplotypeCaller/{sample}/{interval}.g.vcf.gz", sample=samples.keys(), interval="{interval}"),
     
     output:
-        directory(working_dir + "/JointCallSNPs/database"),
+        directory("/dev/shm/pallares_lab/database_{interval}"),
     
     log:
-        log_dir + "/JointCallSNPs/GenomicsDBImport.log",   
-     
+        log_dir + "/JointCallSNPs/GenomicsDBImport_{interval}.log",   
     
     params:
-        outdir = working_dir+"/JointCallSNPs"
-        
-    threads:
-        256
-        
+        outdir = "/dev/shm/pallares_lab",
+        interval = "{interval}",
+        input_params = lambda wildcards, input: " ".join(["-V "+ f for f in input]),
+    
+    threads: 4
+    
     conda:
         "../envs/gatk.yml"
-
+    
     shell:
         "mkdir -p {params.outdir} && "
-        "echo {input.f} | sed 's/ /\\n /g' | sed 's/^/-V /' > input_files.txt && "
-        
-        "gatk --java-options '-Xmx100G -XX:+UseParallelGC -XX:ParallelGCThreads=32' "
+        "gatk --java-options '-Xmx100G' "
         "GenomicsDBImport "
         "--genomicsdb-workspace-path {output} "
-        "-L out.bed "
-        "$(< input_files.txt) " #info about -V *.g.vcf.gz
-        #"--reader-threads {threads} "
-        "--max-num-intervals-to-import-in-parallel 32 "
+        "-L {params.interval} "
+        "{params.input_params} "
         "--batch-size 50 "
-        "--reader-threads 5 "
-        ">{log} 2>&1 && "
-        
-        "rm input_files.txt  "
-        
+        "--reader-threads {threads} "
+        ">{log} 2>&1 "
+
 rule GenotypeGVCFs:
     input:
         R = working_dir + "/genome_prepare/"+ref_basename,
-        db = working_dir + "/JointCallSNPs/database",
+        db = "/dev/shm/pallares_lab/database_{interval}",
     
     output:
-        working_dir + "/JointCallSNPs/all_samples.vcf.gz",
+        working_dir + "/JointCallSNPs/{interval}.vcf.gz",
     
     log:
-        log_dir + "/JointCallSNPs/GenotypeGVCFs.log",     
-    
-    params:
-        outdir = working_dir+"/JointCallSNPs"
+        log_dir + "/JointCallSNPs/GenotypeGVCFs_{interval}.log",     
         
+    threads :1
+    
     conda:
         "../envs/gatk.yml"
-    threads:
-        256
-
+    
     shell:     
-        "gatk --java-options '-Xmx100G -XX:+UseParallelGC -XX:ParallelGCThreads=32' "
+        "gatk --java-options '-Xmx100G' "
         "GenotypeGVCFs "
         "-R {input.R} "
         "-V gendb://{input.db} "
-        "-O {output} "
-        ">{log} 2>&1"
+        "-O {output} && "
+        "rm -rf {input.db} "
+        ">{log} 3>&1 "
+
+
+rule GatherVcfs:
+    input:
+       expand(working_dir + "/JointCallSNPs/{interval}.vcf.gz", interval=INTERVALS)
+    output:
+        working_dir + "/JointCallSNPs/all_samples.vcf.gz"
+    log:
+        log_dir + "/JointCallSNPs/GatherVcfs.log",     
+    
+    params:
+        input_params = lambda wildcards,input:" ".join(["I= "+ f for f in input])
         
-        
+    conda:
+        "../envs/gatk.yml"
 
-
-
+    shell: 
+        "rm -rf /dev/shm/pallares_lab/ && "    
+        "gatk GatherVcfs "
+        "{params.input_params} O={output} && "
+        "rm {input} && "
+        "gatk IndexFeatureFile -I {output} "
+        ">{log} 3>&1 " 
+     
