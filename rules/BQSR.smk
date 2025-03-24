@@ -15,7 +15,7 @@ rule BaseRecalibrator:
     params:
         outdir = working_dir+"/BQSR"
         
-    threads: 8
+    threads: 1
     
     conda:
         "../envs/gatk.yml"
@@ -47,7 +47,7 @@ rule ApplyBQSR:
     params:
         outdir = working_dir+"/BQSR"
         
-    threads: 8
+    threads: 1
     
     conda:
         "../envs/gatk.yml"
