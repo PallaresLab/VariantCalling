@@ -54,10 +54,9 @@ rule ApplyBQSR:
     
     shell:        
         "gatk --java-options '-Xmx20G' "
-        "ApplyBQSRSpark "
+        "ApplyBQSR "
         "-O {output} "
         "-R {input.R} "
         "-I {input.bam} "
         "--bqsr-recal-file {input.table} "
-        "--spark-master local[{threads}] "
         ">{log} 2>&1"
