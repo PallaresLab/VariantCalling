@@ -23,12 +23,11 @@ rule BaseRecalibrator:
     shell:
         "mkdir -p {params.outdir} && "
         "gatk --java-options '-Xmx20G' "
-        "BaseRecalibratorSpark "
+        "BaseRecalibrator "
         "-O {output} "
         "-R {input.R} "
         "-I {input.bam} "
-        "--known-sites {input.vcf} "
-        "--spark-master local[{threads}] "        
+        "--known-sites {input.vcf} "       
         ">{log} 2>&1"
        
         
