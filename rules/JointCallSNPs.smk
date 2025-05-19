@@ -1,18 +1,19 @@
 rule GenomicsDBImport:
     input:
-        expand(working_dir+"/HaplotypeCaller/{sample}/{interval}.g.vcf.gz", sample=samples.keys(), interval="{interval}"),
+        expand(working_dir+"/HaplotypeCaller/{sample}/{idx}.g.vcf.gz", sample=samples.keys(), idx=IDX),
+
     
     output:
-        directory("/dev/shm/pallares_lab/database_{interval}"),
+        directory("/dev/shm/pallares_lab/database_{idx}"),
     
     log:
-        log_dir + "/JointCallSNPs/GenomicsDBImport_{interval}.log",   
+        log_dir + "/JointCallSNPs/GenomicsDBImport_{idx}.log",   
     
     params:
         outdir = "/dev/shm/pallares_lab",
-        interval = "{interval}",
-        input_params = lambda wildcards, input: " ".join(["-V "+ f for f in input]),
-    
+        input_params = lambda wildcards, input: " ".join(["-V "+ i for i in input]),
+        interval = lambda wildcards: " ".join([f"-L {chrom}:{start+1}-{end}" for chrom, start, end in INTERVALS[int(wildcards.idx)]]),
+        
     threads: 4
     
     conda:
@@ -23,7 +24,7 @@ rule GenomicsDBImport:
         "gatk --java-options '-Xmx100G' "
         "GenomicsDBImport "
         "--genomicsdb-workspace-path {output} "
-        "-L {params.interval} "
+        "{params.interval} "
         "{params.input_params} "
         "--batch-size 50 "
         "--reader-threads {threads} "
@@ -32,13 +33,13 @@ rule GenomicsDBImport:
 rule GenotypeGVCFs:
     input:
         R = working_dir + "/genome_prepare/"+ref_basename,
-        db = "/dev/shm/pallares_lab/database_{interval}",
+        db = "/dev/shm/pallares_lab/database_{idx}",
     
     output:
-        working_dir + "/JointCallSNPs/{interval}.vcf.gz",
+        working_dir + "/JointCallSNPs/{idx}.vcf.gz",
     
     log:
-        log_dir + "/JointCallSNPs/GenotypeGVCFs_{interval}.log",     
+        log_dir + "/JointCallSNPs/GenotypeGVCFs_{idx}.log",     
         
     threads :1
     
@@ -57,7 +58,7 @@ rule GenotypeGVCFs:
 
 rule GatherVcfs:
     input:
-       expand(working_dir + "/JointCallSNPs/{interval}.vcf.gz", interval=INTERVALS)
+       expand(working_dir + "/JointCallSNPs/{idx}.vcf.gz", idx=IDX)
     output:
         working_dir + "/JointCallSNPs/all_samples.vcf.gz"
     log:

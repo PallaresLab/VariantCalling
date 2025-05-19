@@ -27,7 +27,7 @@ rule BaseRecalibrator:
         "-O {output} "
         "-R {input.R} "
         "-I {input.bam} "
-        "--known-sites {input.vcf} "       
+        "--known-sites {input.vcf} "        
         ">{log} 2>&1"
        
         
