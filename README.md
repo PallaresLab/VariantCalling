@@ -56,6 +56,7 @@ This snakemake pipeline is designed for Variant Calling
     conda config --add channels bioconda
     conda config --add channels conda-forge
     ```
+    !!!Notice conda deflut channel will cause SSL error with Max Planck intranet.
 
 5. Install snakemake
 
@@ -83,7 +84,17 @@ This snakemake pipeline is designed for Variant Calling
     ```bash
     snakemake --configfile "config.yaml" --use-conda  --cores N
     ```
+   if you need to submit the jobs to SGE cluster to run the pipeline
+   
+    download snakemake-executor-plugin-cluster-generic by pip
+    ```bash
+    pip install snakemake-executor-plugin-cluster-generic
+    ```
+    then
+    ```bash
+    snakemake --use-conda --jobs {cores}  --executor cluster-generic --cluster-generic-submit-cmd  "qsub -cwd -V -l h_vmem=50G -pe parallel {threads} -o logs/ -e logs/"
+    ```
 
-!!!Notice conda deflut channel will cause SSL error with Max Planck intranet.
+
 
 
