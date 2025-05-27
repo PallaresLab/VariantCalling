@@ -56,7 +56,7 @@ This snakemake pipeline is designed for Variant Calling
     conda config --add channels bioconda
     conda config --add channels conda-forge
     ```
-    !!!Notice conda deflut channel will cause SSL error with Max Planck intranet.
+    !!!Notice conda default channel will cause SSL error with Max Planck intranet.
 
 5. Install snakemake
 
