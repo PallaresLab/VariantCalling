@@ -79,7 +79,7 @@ This snakemake pipeline is designed for Variant Calling
     snakemake --configfile "config.yaml" --use-conda  --cores N --dryrun
     ```
 
-9.  Execute the workflow
+9.  Execute the workflow (Add the --notemp flag if you want to keep the intermediate files instead of automatically deleting them)
 
     ```bash
     snakemake --configfile "config.yaml" --use-conda  --cores N
@@ -92,8 +92,10 @@ This snakemake pipeline is designed for Variant Calling
     ```
     then
     ```bash
-    snakemake --use-conda --jobs {cores}  --executor cluster-generic --cluster-generic-submit-cmd  "qsub -cwd -V -l h_vmem=50G -pe parallel {threads} -o logs/ -e logs/"
+    snakemake --use-conda --jobs {cores}  --executor cluster-generic --cluster-generic-submit-cmd  "qsub -cwd -V -l h_vmem={resources.mem_mb}M  -pe parallel {threads} -o logs/ -e logs/"
     ```
+
+   
 
 
 
