@@ -1,6 +1,6 @@
 rule GenomicsDBImport:
     input:
-        expand(working_dir+"/HaplotypeCaller/{sample}/{idx}.g.vcf.gz", sample=samples.keys(), idx=IDX),
+        expand(working_dir+"/HaplotypeCaller/{sample}/{{idx}}.g.vcf.gz", sample=samples.keys()),
 
     
     output:
@@ -51,9 +51,9 @@ rule GenotypeGVCFs:
         "GenotypeGVCFs "
         "-R {input.R} "
         "-V gendb://{input.db} "
-        "-O {output} && "
+        "-O {output} "
+        ">{log} 2>&1 && "
         "rm -rf {input.db} "
-        ">{log} 3>&1 "
 
 
 rule GatherVcfs:
@@ -71,10 +71,11 @@ rule GatherVcfs:
         "../envs/gatk.yml"
 
     shell: 
-        "rm -rf /dev/shm/pallares_lab/ && "    
+        "rm -rf /dev/shm/pallares_lab/ && "
         "gatk GatherVcfs "
-        "{params.input_params} O={output} && "
+        "{params.input_params} O={output} "
+        ">{log} 2>&1 && "
         "rm {input} && "
         "gatk IndexFeatureFile -I {output} "
-        ">{log} 3>&1 " 
+        ">>{log} 2>&1 "
      

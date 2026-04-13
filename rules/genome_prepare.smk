@@ -37,6 +37,7 @@ rule CreateSequenceDictionary:
         "../envs/gatk.yml"
 
     shell: 
-        "gatk CreateSequenceDictionary -R {input.R} -O {output} && "
+        "gatk CreateSequenceDictionary -R {input.R} -O {output} "
+        ">{log} 2>&1 && "
         "gatk IndexFeatureFile -I {input.dbSNP} "
-        ">{log} 2>&1"
+        ">>{log} 2>&1"
