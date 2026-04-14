@@ -17,14 +17,14 @@ rule GenomicsDBImport:
     threads: 4
 
     resources:
-        mem_mb = lambda wildcards, attempt: 160000 * (2 ** (attempt - 1))
+        mem_mb = lambda wildcards, attempt: 800000 * (2 ** (attempt - 1))
 
     conda:
         "../envs/gatk.yml"
 
     shell:
         "mkdir -p {params.outdir} && "
-        "gatk --java-options '-Xmx100G' "
+        "gatk --java-options '-Xmx50G' "
         "GenomicsDBImport "
         "--genomicsdb-workspace-path {output} "
         "{params.interval} "
@@ -47,13 +47,13 @@ rule GenotypeGVCFs:
     threads: 1
 
     resources:
-        mem_mb = lambda wildcards, attempt: 160000 * (2 ** (attempt - 1))
+        mem_mb = lambda wildcards, attempt: 800000 * (2 ** (attempt - 1))
 
     conda:
         "../envs/gatk.yml"
 
     shell:
-        "gatk --java-options '-Xmx100G' "
+        "gatk --java-options '-Xmx50G' "
         "GenotypeGVCFs "
         "-R {input.R} "
         "-V gendb://{input.db} "
@@ -74,7 +74,7 @@ rule GatherVcfs:
         input_params = lambda wildcards,input:" ".join(["I= "+ f for f in input])
         
     resources:
-        mem_mb = lambda wildcards, attempt: 16000 * (2 ** (attempt - 1))
+        mem_mb = lambda wildcards, attempt: 50000 * (2 ** (attempt - 1))
 
     conda:
         "../envs/gatk.yml"

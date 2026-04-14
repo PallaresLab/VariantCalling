@@ -18,7 +18,7 @@ rule HaplotypeCaller:
   threads: 1
 
   resources:
-      mem_mb = lambda wildcards, attempt: 32000 * (2 ** (attempt - 1))
+      mem_mb = lambda wildcards, attempt: 30000 * (2 ** (attempt - 1))
 
   conda:
     "../envs/gatk.yml"

@@ -18,7 +18,7 @@ rule BaseRecalibrator:
     threads: 1
 
     resources:
-        mem_mb = lambda wildcards, attempt: 6000 * (2 ** (attempt - 1))
+        mem_mb = lambda wildcards, attempt: 30000 * (2 ** (attempt - 1))
 
     conda:
         "../envs/gatk.yml"
@@ -53,7 +53,7 @@ rule ApplyBQSR:
     threads: 1
 
     resources:
-        mem_mb = lambda wildcards, attempt: 6000 * (2 ** (attempt - 1))
+        mem_mb = lambda wildcards, attempt: 30000 * (2 ** (attempt - 1))
 
     conda:
         "../envs/gatk.yml"

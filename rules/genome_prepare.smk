@@ -12,6 +12,8 @@ rule samtools:
     params:
         outdir = working_dir+"/genome_prepare",
         new_genome = working_dir+"/genome_prepare/"+ref_basename 
+    resources:
+        mem_mb = lambda wildcards, attempt: 30000 * (2 ** (attempt - 1))
         
     conda:
         "../envs/samtools.yml"
@@ -32,6 +34,8 @@ rule CreateSequenceDictionary:
            
     log:
         log_dir+"/genome_prepare/gatk_CreateSequenceDictionary.log"
+    resources:
+        mem_mb = lambda wildcards, attempt: 30000 * (2 ** (attempt - 1))
         
     conda:
         "../envs/gatk.yml"
