@@ -15,10 +15,13 @@ rule GenomicsDBImport:
         interval = lambda wildcards: " ".join([f"-L {chrom}:{start+1}-{end}" for chrom, start, end in INTERVALS[int(wildcards.idx)]]),
         
     threads: 4
-    
+
+    resources:
+        mem_mb = lambda wildcards, attempt: 160000 * (2 ** (attempt - 1))
+
     conda:
         "../envs/gatk.yml"
-    
+
     shell:
         "mkdir -p {params.outdir} && "
         "gatk --java-options '-Xmx100G' "
@@ -41,12 +44,15 @@ rule GenotypeGVCFs:
     log:
         log_dir + "/JointCallSNPs/GenotypeGVCFs_{idx}.log",     
         
-    threads :1
-    
+    threads: 1
+
+    resources:
+        mem_mb = lambda wildcards, attempt: 160000 * (2 ** (attempt - 1))
+
     conda:
         "../envs/gatk.yml"
-    
-    shell:     
+
+    shell:
         "gatk --java-options '-Xmx100G' "
         "GenotypeGVCFs "
         "-R {input.R} "
@@ -67,10 +73,13 @@ rule GatherVcfs:
     params:
         input_params = lambda wildcards,input:" ".join(["I= "+ f for f in input])
         
+    resources:
+        mem_mb = lambda wildcards, attempt: 16000 * (2 ** (attempt - 1))
+
     conda:
         "../envs/gatk.yml"
 
-    shell: 
+    shell:
         "rm -rf /dev/shm/pallares_lab/ && "
         "gatk GatherVcfs "
         "{params.input_params} O={output} "

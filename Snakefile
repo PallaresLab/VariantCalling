@@ -56,7 +56,7 @@ def process_intervals(file_path, max_size=500000):
 
 INTERVALS= process_intervals(config['bed_file'])
 IDX=list(range(len(INTERVALS)))
-print(IDX)
+
 """
 INTERVALS = []
 

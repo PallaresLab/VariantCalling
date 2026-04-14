@@ -15,8 +15,11 @@ rule HaplotypeCaller:
     outdir=working_dir+"/HaplotypeCaller/{sample}",
     interval = lambda wildcards: " ".join([f"-L {chrom}:{start+1}-{end}" for chrom, start, end in INTERVALS[int(wildcards.idx)]])
     
-  threads :1
-  
+  threads: 1
+
+  resources:
+      mem_mb = lambda wildcards, attempt: 32000 * (2 ** (attempt - 1))
+
   conda:
     "../envs/gatk.yml"
   
