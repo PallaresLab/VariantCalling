@@ -18,14 +18,14 @@ rule BaseRecalibrator:
     threads: 1
 
     resources:
-        mem_mb = lambda wildcards, attempt: 30000 * (2 ** (attempt - 1))
+        mem_mb = lambda wildcards, attempt: 10000 * (2 ** (attempt - 1))
 
     conda:
         "../envs/gatk.yml"
 
     shell:
         "mkdir -p {params.outdir} && "
-        "gatk --java-options '-Xmx20G' "
+        "gatk --java-options '-Xmx4G' "
         "BaseRecalibrator "
         "-O {output} "
         "-R {input.R} "
@@ -53,13 +53,13 @@ rule ApplyBQSR:
     threads: 1
 
     resources:
-        mem_mb = lambda wildcards, attempt: 30000 * (2 ** (attempt - 1))
+        mem_mb = lambda wildcards, attempt: 10000 * (2 ** (attempt - 1))
 
     conda:
         "../envs/gatk.yml"
 
     shell:
-        "gatk --java-options '-Xmx20G' "
+        "gatk --java-options '-Xmx4G' "
         "ApplyBQSR "
         "-O {output} "
         "-R {input.R} "

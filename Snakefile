@@ -15,7 +15,7 @@ samples = dict((y[0], x) for x, y in sample_files)
 
 #singularity: "docker://broadinstitute/gatk"
 
-def process_intervals(file_path, max_size=500000):
+def process_intervals(file_path, max_size=2000000):
     result = []
     small_group = []
     small_total = 0
